@@ -32,3 +32,11 @@ function create_agents(n::Int, infection_probability::Float64, area_size::Float6
 
     return agents
 end
+
+function move_agents!(agents::Vector{Agent}, area_size::Float64)
+    for a in agents
+        angle = 2 * π * rand()
+        a.location = (a.location[1] + a.speed * cos(angle), a.location[2] + a.speed * sin(angle))
+        a.location = (mod(a.location[1], area_size), mod(a.location[2], area_size))
+    end
+end

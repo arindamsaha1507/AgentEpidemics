@@ -16,3 +16,5 @@ println("Susceptible: $susceptible")
 println("Infected: $infected")
 
 plot_agents(agents)
+
+animate_agents!(agents, size, 100)
