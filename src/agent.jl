@@ -40,3 +40,33 @@ function move_agents!(agents::Vector{Agent}, area_size::Float64)
         a.location = (mod(a.location[1], area_size), mod(a.location[2], area_size))
     end
 end
+
+
+function infect_agents!(agents::Vector{Agent}, infection_probability::Float64)
+    for a in agents
+        if a.health == "Susceptible"
+            for c in a.contacts
+                if agents[c].health == "Infected" && rand() < infection_probability
+                    a.health = "Infected"
+                    break
+                end
+            end
+        end
+    end
+end
+
+function recover_agents!(agents::Vector{Agent}, recovery_probability::Float64)
+    for a in agents
+        if a.health == "Infected" && rand() < recovery_probability
+            a.health = "Recovered"
+        end
+    end
+end
+
+function lose_immunity!(agents::Vector{Agent}, immunity_loss_probability::Float64)
+    for a in agents
+        if a.health == "Recovered" && rand() < immunity_loss_probability
+            a.health = "Susceptible"
+        end
+    end
+end
