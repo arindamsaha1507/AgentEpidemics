@@ -16,9 +16,8 @@ function animate_agents!(agents::Vector{Agent}, area_size::Float64, n_steps::Int
     p = scatter(x, y, group=health, legend=true)
 
     anim = @animate for i in 1:n_steps
-        infect_agents!(agents, 0.01)
-        recover_agents!(agents, 0.01)
-        lose_immunity!(agents, 0.05)
+
+        evolve_agents!(agents, 0.01, 0.01, 0.05)
         move_agents!(agents, area_size)
         x = [a.location[1] for a in agents]
         y = [a.location[2] for a in agents]

@@ -70,3 +70,10 @@ function lose_immunity!(agents::Vector{Agent}, immunity_loss_probability::Float6
         end
     end
 end
+
+function evolve_agents!(agents::Vector{Agent}, infection_probability::Float64, recovery_probability::Float64, immunity_loss_probability::Float64)
+    move_agents!(agents, 100.0)
+    infect_agents!(agents, infection_probability)
+    recover_agents!(agents, recovery_probability)
+    lose_immunity!(agents, immunity_loss_probability)
+end
