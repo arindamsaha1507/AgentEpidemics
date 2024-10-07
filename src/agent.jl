@@ -71,9 +71,37 @@ function lose_immunity!(agents::Vector{Agent}, immunity_loss_probability::Float6
     end
 end
 
-function evolve_agents!(agents::Vector{Agent}, infection_probability::Float64, recovery_probability::Float64, immunity_loss_probability::Float64)
+function current_system_state(agents::Vector{Agent})
+    susceptible = sum([a.health == "Susceptible" for a in agents])
+    infected = sum([a.health == "Infected" for a in agents])
+    recovered = sum([a.health == "Recovered" for a in agents])
+    return (susceptible, infected, recovered)
+end
+
+function evolve_agents!(agents::Vector{Agent}, infection_probability::Float64, recovery_probability::Float64, immunity_loss_probability::Float64, record_file::String="Timeseries.csv")
     move_agents!(agents, 100.0)
     infect_agents!(agents, infection_probability)
     recover_agents!(agents, recovery_probability)
     lose_immunity!(agents, immunity_loss_probability)
+
+    state = current_system_state(agents)
+
+    open(record_file, "a") do f
+        write(f, join(string.(state), ",") * "\n")
+    end
+
+end
+
+function run_simulation(n::Int, infection_probability::Float64, recovery_probability::Float64, immunity_loss_probability::Float64, record::Bool=false, record_file::String="Timeseries.csv")
+    agents = create_agents(n, infection_probability, 100.0, 10.0, 1.0, 0.1)
+    println(current_system_state(agents))
+    if record
+        open(record_file, "w") do f
+            write(f, "Susceptible,Infected,Recovered\n")
+        end
+    end
+
+    for i in 1:10000
+        evolve_agents!(agents, infection_probability, recovery_probability, immunity_loss_probability, record_file)
+    end
 end

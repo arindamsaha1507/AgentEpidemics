@@ -17,4 +17,6 @@ println("Infected: $infected")
 
 plot_agents(agents)
 
-animate_agents!(agents, size, 100)
+# animate_agents!(agents, size, 100)
+
+run_simulation(n, infection_probablity, 0.05, 0.01, true, "Timeseries.csv")
