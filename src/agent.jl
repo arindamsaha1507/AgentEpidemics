@@ -96,7 +96,6 @@ end
 
 function run_simulation(n::Int, total_time::Int, initial_infection_probability::Float64, side_length::Float64, contact_radius::Float64, mean_speed::Float64, std_speed::Float64, infection_probability::Float64, recovery_probability::Float64, immunity_loss_probability::Float64, record::Bool=false, record_file::String="Timeseries.csv")
     agents = create_agents(n, initial_infection_probability, side_length, contact_radius, mean_speed, std_speed)
-    println(current_system_state(agents))
     if record
         open(record_file, "w") do f
             write(f, "Susceptible,Infected,Recovered\n")
@@ -106,6 +105,12 @@ function run_simulation(n::Int, total_time::Int, initial_infection_probability::
     for i in 1:total_time
         evolve_agents!(agents, side_length, infection_probability, recovery_probability, immunity_loss_probability, record_file)
     end
+end
+
+
+function run_simulation(filename::String)
+    settings = read_settings(filename)
+    run_simulation(settings["n"], settings["total_time"], settings["initial_infection_probability"], settings["side_length"], settings["contact_radius"], settings["mean_speed"], settings["std_speed"], settings["infection_probability"], settings["recovery_probability"], settings["immunity_loss_probability"], settings["record"], settings["record_file"])
 end
 
 function read_settings(file::String)
