@@ -1,7 +1,9 @@
+using YAML
+
 mutable struct Agent
     id::Int
     health::String
-    location::Tuple{Float64, Float64}
+    location::Tuple{Float64,Float64}
     speed::Float64
     contacts::Vector{Int}
 end
@@ -10,12 +12,12 @@ function distance(a::Agent, b::Agent)
     return sqrt((a.location[1] - b.location[1])^2 + (a.location[2] - b.location[2])^2)
 end
 
-function create_agents(n::Int, infection_probability::Float64, area_size::Float64, contact_radius::Float64, mean_speed::Float64, std_speed::Float64)
-    
+function create_agents(n::Int, initial_infection_probability::Float64, area_size::Float64, contact_radius::Float64, mean_speed::Float64, std_speed::Float64)
+
     agents = Vector{Agent}(undef, n)
 
     for i in 1:n
-        health = rand() < infection_probability ? "Infected" : "Susceptible"
+        health = rand() < initial_infection_probability ? "Infected" : "Susceptible"
         location = (rand() * area_size, rand() * area_size)
         contacts = Int[]
         speed = abs(mean_speed + std_speed * randn())
@@ -78,8 +80,8 @@ function current_system_state(agents::Vector{Agent})
     return (susceptible, infected, recovered)
 end
 
-function evolve_agents!(agents::Vector{Agent}, infection_probability::Float64, recovery_probability::Float64, immunity_loss_probability::Float64, record_file::String="Timeseries.csv")
-    move_agents!(agents, 100.0)
+function evolve_agents!(agents::Vector{Agent}, side_length::Float64, infection_probability::Float64, recovery_probability::Float64, immunity_loss_probability::Float64, record_file::String="Timeseries.csv")
+    move_agents!(agents, side_length)
     infect_agents!(agents, infection_probability)
     recover_agents!(agents, recovery_probability)
     lose_immunity!(agents, immunity_loss_probability)
@@ -92,8 +94,8 @@ function evolve_agents!(agents::Vector{Agent}, infection_probability::Float64, r
 
 end
 
-function run_simulation(n::Int, infection_probability::Float64, recovery_probability::Float64, immunity_loss_probability::Float64, record::Bool=false, record_file::String="Timeseries.csv")
-    agents = create_agents(n, infection_probability, 100.0, 10.0, 1.0, 0.1)
+function run_simulation(n::Int, total_time::Int, initial_infection_probability::Float64, side_length::Float64, contact_radius::Float64, mean_speed::Float64, std_speed::Float64, infection_probability::Float64, recovery_probability::Float64, immunity_loss_probability::Float64, record::Bool=false, record_file::String="Timeseries.csv")
+    agents = create_agents(n, initial_infection_probability, side_length, contact_radius, mean_speed, std_speed)
     println(current_system_state(agents))
     if record
         open(record_file, "w") do f
@@ -101,7 +103,12 @@ function run_simulation(n::Int, infection_probability::Float64, recovery_probabi
         end
     end
 
-    for i in 1:10000
-        evolve_agents!(agents, infection_probability, recovery_probability, immunity_loss_probability, record_file)
+    for i in 1:total_time
+        evolve_agents!(agents, side_length, infection_probability, recovery_probability, immunity_loss_probability, record_file)
     end
+end
+
+function read_settings(file::String)
+    settings = YAML.load_file(file)
+    return settings
 end

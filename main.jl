@@ -2,21 +2,21 @@ include("src/AgentEpidemics.jl")
 
 using .AgentEpidemics
 
-n = 500
-size = 100.0
-radius = 10.0
-infection_probablity = 0.1
+# n = 500
+# size = 100.0
+# radius = 10.0
+# infection_probablity = 0.1
 
-agents = create_agents(n, infection_probablity, size, radius, 1.0, 0.1)
+# agents = create_agents(n, infection_probablity, size, radius, 1.0, 0.1)
 
-susceptible = sum([a.health == "Susceptible" for a in agents])
-infected = sum([a.health == "Infected" for a in agents])
+# susceptible = sum([a.health == "Susceptible" for a in agents])
+# infected = sum([a.health == "Infected" for a in agents])
 
-println("Susceptible: $susceptible")
-println("Infected: $infected")
+# println("Susceptible: $susceptible")
+# println("Infected: $infected")
 
-plot_agents(agents)
+# plot_agents(agents)
 
 # animate_agents!(agents, size, 100)
 
-run_simulation(n, infection_probablity, 0.05, 0.01, true, "Timeseries.csv")
+run_simulation(500, 1000, 0.1, 100.0, 10.0, 1.0, 0.1, 0.1, 0.05, 0.01, true, "Timeseries.csv")

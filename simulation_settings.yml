@@ -1,0 +1,13 @@
+n_agents: 100
+area_size: 100.0
+interaction_radius: 10.0
+initial_infection_probability: 0.1
+
+infection_rate: 0.1
+recovery_rate: 0.1
+immunity_loss_rate: 0.1
+
+agent_mean_speed: 1.0
+agent_speed_std: 0.1
+
+time_steps: 1000
