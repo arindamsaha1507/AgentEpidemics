@@ -94,7 +94,79 @@ function evolve_agents!(agents::Vector{Agent}, side_length::Float64, infection_p
 
 end
 
+mutable struct Probability
+    value::Float64
+
+    function Probability(value::Float64)
+        if value < 0 || value > 1
+            throw(ArgumentError("Probability value must be between 0 and 1"))
+        end
+        new(value)
+    end
+
+end
+
+
+mutable struct PositiveNumber
+    value::Float64
+
+    function PositiveNumber(value::Float64)
+        if value < 0
+            throw(ArgumentError("Value must be positive"))
+        end
+        new(value)
+    end
+
+    function PositiveNumber(value::Int)
+        if value < 0
+            throw(ArgumentError("Value must be positive"))
+        end
+        new(value)
+        
+    end
+
+end
+
+
+mutable struct Settings
+    n::Int
+    total_time::Int
+    initial_infection_probability::Float64
+    side_length::Float64
+    contact_radius::Float64
+    mean_speed::Float64
+    std_speed::Float64
+    infection_probability::Float64
+    recovery_probability::Float64
+    immunity_loss_probability::Float64
+    record::Bool
+    record_file::String
+
+    function Settings(n::Int, total_time::Int, initial_infection_probability::Float64, side_length::Float64, contact_radius::Float64, mean_speed::Float64, std_speed::Float64, infection_probability::Float64, recovery_probability::Float64, immunity_loss_probability::Float64, record::Bool, record_file::String)
+
+        n = PositiveNumber(n).value
+        total_time = PositiveNumber(total_time).value
+        side_length = PositiveNumber(side_length).value
+        contact_radius = PositiveNumber(contact_radius).value
+        mean_speed = PositiveNumber(mean_speed).value
+        std_speed = PositiveNumber(std_speed).value
+
+        infection_probability = Probability(infection_probability).value
+        recovery_probability = Probability(recovery_probability).value
+        immunity_loss_probability = Probability(immunity_loss_probability).value
+
+        new(n, total_time, initial_infection_probability, side_length, contact_radius, mean_speed, std_speed, infection_probability, recovery_probability, immunity_loss_probability, record, record_file)
+    end
+        
+end
+
+
 function run_simulation(n::Int, total_time::Int, initial_infection_probability::Float64, side_length::Float64, contact_radius::Float64, mean_speed::Float64, std_speed::Float64, infection_probability::Float64, recovery_probability::Float64, immunity_loss_probability::Float64, record::Bool=false, record_file::String="Timeseries.csv")
+
+
+    Settings(n, total_time, initial_infection_probability, side_length, contact_radius, mean_speed, std_speed, infection_probability, recovery_probability, immunity_loss_probability, record, record_file)
+
+
     agents = create_agents(n, initial_infection_probability, side_length, contact_radius, mean_speed, std_speed)
     if record
         open(record_file, "w") do f
