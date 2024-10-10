@@ -1,5 +1,19 @@
 using YAML
 
+
+"""
+    struct Agent
+
+Represents an agent in the simulation with a unique ID, health state, location, and contacts.
+
+# Fields
+- `id`: The unique identifier for the agent.
+- `health`: The health state of the agent, which can be `'S'` (Susceptible), `'I'` (Infected), `'E'` (Exposed), or `'R'` (Recovered).
+- `location`: A tuple representing the (x, y) coordinates of the agent in the simulation area.
+- `contacts`: A vector of agent IDs that this agent has come into contact with.
+- `speed`: A floating-point value representing the agent's speed in the simulation.
+
+"""
 mutable struct Agent
     id::Int
     health::String
@@ -8,10 +22,40 @@ mutable struct Agent
     contacts::Vector{Int}
 end
 
+"""
+    distance(a::Agent, b::Agent)
+
+Calculate the Euclidean distance between two agents.
+
+# Arguments
+- `a::Agent`: The first agent.
+- `b::Agent`: The second agent.
+
+# Returns
+The Euclidean distance between the two agents.
+
+"""
 function distance(a::Agent, b::Agent)
     return sqrt((a.location[1] - b.location[1])^2 + (a.location[2] - b.location[2])^2)
 end
 
+"""
+    create_agents(n::Int, initial_infection_probability::Float64, area_size::Float64, contact_radius::Float64, mean_speed::Float64, std_speed::Float64)
+
+Create a vector of agents with the specified parameters.
+
+# Arguments
+- `n::Int`: The number of agents to create.
+- `initial_infection_probability::Float64`: The probability that an agent is initially infected.
+- `area_size::Float64`: The size of the simulation area.
+- `contact_radius::Float64`: The maximum distance at which agents can come into contact.
+- `mean_speed::Float64`: The mean speed of the agents.
+- `std_speed::Float64`: The standard deviation of the speed of the agents.
+
+# Returns
+A vector of `Agent` objects.
+
+"""
 function create_agents(n::Int, initial_infection_probability::Float64, area_size::Float64, contact_radius::Float64, mean_speed::Float64, std_speed::Float64)
 
     agents = Vector{Agent}(undef, n)
@@ -35,6 +79,17 @@ function create_agents(n::Int, initial_infection_probability::Float64, area_size
     return agents
 end
 
+
+"""
+    move_agents!(agents::Vector{Agent}, area_size::Float64)
+
+Move the agents in the simulation area.
+
+# Arguments
+- `agents::Vector{Agent}`: A vector of `Agent` objects.
+- `area_size::Float64`: The size of the simulation area.
+
+"""
 function move_agents!(agents::Vector{Agent}, area_size::Float64)
     for a in agents
         angle = 2 * π * rand()
@@ -44,6 +99,16 @@ function move_agents!(agents::Vector{Agent}, area_size::Float64)
 end
 
 
+"""
+    infect_agents!(agents::Vector{Agent}, infection_probability::Float64)
+
+Infect susceptible agents based on the infection probability and their contacts.
+
+# Arguments
+- `agents::Vector{Agent}`: A vector of `Agent` objects.
+- `infection_probability::Float64`: The probability of infection.
+
+"""
 function infect_agents!(agents::Vector{Agent}, infection_probability::Float64)
     for a in agents
         if a.health == "Susceptible"
@@ -57,6 +122,17 @@ function infect_agents!(agents::Vector{Agent}, infection_probability::Float64)
     end
 end
 
+
+"""
+    recover_agents!(agents::Vector{Agent}, recovery_probability::Float64)
+
+Recover infected agents based on the recovery probability.
+
+# Arguments
+- `agents::Vector{Agent}`: A vector of `Agent` objects.
+- `recovery_probability::Float64`: The probability of recovery.
+
+"""
 function recover_agents!(agents::Vector{Agent}, recovery_probability::Float64)
     for a in agents
         if a.health == "Infected" && rand() < recovery_probability
@@ -65,6 +141,17 @@ function recover_agents!(agents::Vector{Agent}, recovery_probability::Float64)
     end
 end
 
+
+"""
+    lose_immunity!(agents::Vector{Agent}, immunity_loss_probability::Float64)
+
+Lose immunity for recovered agents based on the immunity loss probability.
+
+# Arguments
+- `agents::Vector{Agent}`: A vector of `Agent` objects.
+- `immunity_loss_probability::Float64`: The probability of losing immunity.
+
+"""
 function lose_immunity!(agents::Vector{Agent}, immunity_loss_probability::Float64)
     for a in agents
         if a.health == "Recovered" && rand() < immunity_loss_probability
@@ -73,6 +160,19 @@ function lose_immunity!(agents::Vector{Agent}, immunity_loss_probability::Float6
     end
 end
 
+
+"""
+    current_system_state(agents::Vector{Agent})
+
+Calculate the current system state based on the number of susceptible, infected, and recovered agents.
+
+# Arguments
+- `agents::Vector{Agent}`: A vector of `Agent` objects.
+
+# Returns
+A tuple `(susceptible, infected, recovered)` representing the number of agents in each health state.
+
+"""
 function current_system_state(agents::Vector{Agent})
     susceptible = sum([a.health == "Susceptible" for a in agents])
     infected = sum([a.health == "Infected" for a in agents])
@@ -80,6 +180,21 @@ function current_system_state(agents::Vector{Agent})
     return (susceptible, infected, recovered)
 end
 
+
+"""
+    evolve_agents!(agents::Vector{Agent}, side_length::Float64, infection_probability::Float64, recovery_probability::Float64, immunity_loss_probability::Float64, record_file::String="Timeseries.csv")
+
+Evolve the agents in the simulation by moving, infecting, recovering, and losing immunity.
+
+# Arguments
+- `agents::Vector{Agent}`: A vector of `Agent` objects.
+- `side_length::Float64`: The size of the simulation area.
+- `infection_probability::Float64`: The probability of infection.
+- `recovery_probability::Float64`: The probability of recovery.
+- `immunity_loss_probability::Float64`: The probability of losing immunity.
+- `record_file::String`: The name of the file to record the system state.
+
+"""
 function evolve_agents!(agents::Vector{Agent}, side_length::Float64, infection_probability::Float64, recovery_probability::Float64, immunity_loss_probability::Float64, record_file::String="Timeseries.csv")
     move_agents!(agents, side_length)
     infect_agents!(agents, infection_probability)
@@ -94,6 +209,16 @@ function evolve_agents!(agents::Vector{Agent}, side_length::Float64, infection_p
 
 end
 
+
+"""
+    struct Probability
+
+Represents a probability value between 0 and 1.
+
+# Fields
+- `value`: The probability value.
+
+"""
 mutable struct Probability
     value::Float64
 
@@ -107,6 +232,15 @@ mutable struct Probability
 end
 
 
+"""
+    struct PositiveNumber
+
+Represents a positive number.
+
+# Fields
+- `value`: The positive number.
+
+"""
 mutable struct PositiveNumber
     value::Float64
 
@@ -128,6 +262,26 @@ mutable struct PositiveNumber
 end
 
 
+"""
+    struct Settings
+
+Represents the settings for the simulation.
+
+# Fields
+- `n`: The number of agents in the simulation.
+- `total_time`: The total time steps for the simulation.
+- `initial_infection_probability`: The probability that an agent is initially infected.
+- `side_length`: The size of the simulation area.
+- `contact_radius`: The maximum distance at which agents can come into contact.
+- `mean_speed`: The mean speed of the agents.
+- `std_speed`: The standard deviation of the speed of the agents.
+- `infection_probability`: The probability of infection.
+- `recovery_probability`: The probability of recovery.
+- `immunity_loss_probability`: The probability of losing immunity.
+- `record`: A boolean indicating whether to record the system state.
+- `record_file`: The name of the file to record the system state.
+
+"""
 mutable struct Settings
     n::Int
     total_time::Int
@@ -161,6 +315,26 @@ mutable struct Settings
 end
 
 
+"""
+    run_simulation(n::Int, total_time::Int, initial_infection_probability::Float64, side_length::Float64, contact_radius::Float64, mean_speed::Float64, std_speed::Float64, infection_probability::Float64, recovery_probability::Float64, immunity_loss_probability::Float64, record::Bool=false, record_file::String="Timeseries.csv")
+
+Run the simulation with the specified parameters.
+
+# Arguments
+- `n::Int`: The number of agents in the simulation.
+- `total_time::Int`: The total time steps for the simulation.
+- `initial_infection_probability::Float64`: The probability that an agent is initially infected.
+- `side_length::Float64`: The size of the simulation area.
+- `contact_radius::Float64`: The maximum distance at which agents can come into contact.
+- `mean_speed::Float64`: The mean speed of the agents.
+- `std_speed::Float64`: The standard deviation of the speed of the agents.
+- `infection_probability::Float64`: The probability of infection.
+- `recovery_probability::Float64`: The probability of recovery.
+- `immunity_loss_probability::Float64`: The probability of losing immunity.
+- `record::Bool`: A boolean indicating whether to record the system state.
+- `record_file::String`: The name of the file to record the system state.
+
+"""
 function run_simulation(n::Int, total_time::Int, initial_infection_probability::Float64, side_length::Float64, contact_radius::Float64, mean_speed::Float64, std_speed::Float64, infection_probability::Float64, recovery_probability::Float64, immunity_loss_probability::Float64, record::Bool=false, record_file::String="Timeseries.csv")
 
 
@@ -180,11 +354,33 @@ function run_simulation(n::Int, total_time::Int, initial_infection_probability::
 end
 
 
+"""
+    run_simulation(filename::String)
+
+Run the simulation with the settings specified in a YAML file.
+
+# Arguments
+- `filename::String`: The name of the YAML file containing the simulation settings.
+
+"""
 function run_simulation(filename::String)
     settings = read_settings(filename)
     run_simulation(settings["n"], settings["total_time"], settings["initial_infection_probability"], settings["side_length"], settings["contact_radius"], settings["mean_speed"], settings["std_speed"], settings["infection_probability"], settings["recovery_probability"], settings["immunity_loss_probability"], settings["record"], settings["record_file"])
 end
 
+
+"""
+    read_settings(file::String)
+
+Read the simulation settings from a YAML file.
+
+# Arguments
+- `file::String`: The name of the YAML file containing the simulation settings.
+
+# Returns
+A dictionary of the simulation settings.
+
+"""
 function read_settings(file::String)
     settings = YAML.load_file(file)
     return settings
