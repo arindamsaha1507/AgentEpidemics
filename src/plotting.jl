@@ -16,3 +16,9 @@ function plot_agents(agents::Vector{Agent})
     scatter(x, y, group=health, legend=true)
     savefig("agents.png")
 end
+
+function plot_agents(sim_output::SimulationOutput, time::Int)
+    filtered = sim_output.positions[sim_output.positions.time .== time, :]
+    scatter(filtered.x, filtered.y, group=filtered.health, legend=true)
+    savefig("agents.png")
+end
