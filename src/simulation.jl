@@ -99,3 +99,9 @@ function run_simulation(filename::String)
     states = run_simulation(settings["n"], settings["total_time"], settings["initial_infection_probability"], settings["side_length"], settings["contact_radius"], settings["mean_speed"], settings["std_speed"], settings["infection_probability"], settings["recovery_probability"], settings["immunity_loss_probability"], settings["record"], settings["record_file"])
     return states
 end
+
+
+function run_simulation(settings::Settings)
+    states = run_simulation(settings.n, settings.total_time, settings.initial_infection_probability, settings.side_length, settings.contact_radius, settings.mean_speed, settings.std_speed, settings.infection_probability, settings.recovery_probability, settings.immunity_loss_probability, settings.record, settings.record_file)
+    return states
+end
