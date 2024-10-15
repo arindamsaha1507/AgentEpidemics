@@ -100,7 +100,17 @@ function run_simulation(filename::String)
     return states
 end
 
+"""
+    run_simulation(settings::Settings)
 
+Run the simulation with the specified settings.
+
+# Arguments
+- `settings::Settings`: The simulation settings.
+
+# Returns
+A dataframe representing the system state at each time step.
+"""
 function run_simulation(settings::Settings)
     states = run_simulation(settings.n, settings.total_time, settings.initial_infection_probability, settings.side_length, settings.contact_radius, settings.mean_speed, settings.std_speed, settings.infection_probability, settings.recovery_probability, settings.immunity_loss_probability, settings.record, settings.record_file)
     return states

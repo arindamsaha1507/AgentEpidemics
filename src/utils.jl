@@ -1,7 +1,16 @@
 using DataFrames
 using YAML
 
+"""
+    struct SimulationOutput
 
+Represents the output of the simulation.
+
+# Fields
+- `states`: A dataframe representing the number of agents in each health state at each time step.
+- `positions`: A dataframe representing the position and health of each agent at each time step.
+
+"""
 mutable struct SimulationOutput
     states::DataFrame
     positions::DataFrame
