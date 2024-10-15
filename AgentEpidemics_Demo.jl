@@ -28,21 +28,135 @@ using PlutoUI
 # ╔═╡ 220cacce-86d9-11ef-0faa-aff9892ea370
 md"""
 # A Demo for the `AgentEpidemics` Package
+
+This demo shows the use of the `AgentEpidemics` package which simulates a group of agents moving randomly in space and exhibiting the **SIRS** infectious disease dynamics.
+
+We first start with loading the package.
+"""
+
+# ╔═╡ e9defd9a-d8ec-4a14-aff5-f6614673cc5f
+md"""There are three distinct ways to define the simulation settings"""
+
+# ╔═╡ 5378540e-e978-47b0-9de3-1908909e764c
+md"""
+## Option 1: Set variables in-code
+"""
+
+# ╔═╡ eb725546-45cb-4b76-89c7-254fd5734216
+begin
+	n = 100
+	side_length = 100.0
+	contact_radius = 10.0
+	initial_infection_probability = 0.1
+	
+	infection_probability = 0.1
+	recovery_probability = 0.1
+	immunity_loss_probability = 0.1 
+
+	mean_speed = 1.0
+	std_speed = 0.1
+
+	total_time = 1000
+
+	record = true
+	record_file = "simulation_data.csv"
+
+	nothing
+end
+
+# ╔═╡ 9f635327-51f0-4fd6-a7de-95a4fa8dba5b
+	md"""
+	
+	Here we have set all parameters within the code.
+	
+	| Description | Variable | Value |
+	|-------------|----------|-------|
+	| Number of agents | `n` | $n |
+	| Length of the square region in which they move | `side_length` | $side_length |
+	| Interaction radius of each agent | `contact_radius` | $contact_radius |
+	| Probability of an agent being infected at the start of the simulation | `initial_infection_probability` | $initial_infection_probability |
+	| Probability of a susceptible agent becoming infected upon contact with an infected agent | `infection_probability` | $infection_probability |
+	| Probability of an infected agent recovering | `recovery_probability` | $recovery_probability |
+	| Probability of a recovered agent losing immunity | `immunity_loss_probability` | $immunity_loss_probability |
+	| Mean speed of agents | `mean_speed` | $mean_speed |
+	| Standard deviation of agents' speed | `std_speed` | $std_speed |
+	| Total number of time-steps in the simulation | `total_time` | $total_time |
+	| Record simulation data | `record` | $record |
+	| File to store recorded data | `record_file` | $record_file |
+	
+	"""
+
+# ╔═╡ 7d9220a8-5dbf-420b-bc80-580b4d9ef37a
+results_1 = run_simulation(n, total_time, initial_infection_probability, side_length, contact_radius, mean_speed, std_speed, infection_probability, recovery_probability, immunity_loss_probability, record, record_file)
+
+# ╔═╡ 37081021-914d-4948-b6d8-cc5ac97b96cd
+md"""
+## Option 2: Create a Settings object
+"""
+
+# ╔═╡ 95b69669-b14b-4588-9dfc-2fbba689a8ff
+settings = Settings(n, total_time, initial_infection_probability, side_length, contact_radius, mean_speed, std_speed, infection_probability, recovery_probability, immunity_loss_probability, record, record_file)
+
+# ╔═╡ 7a6e28b8-9993-4761-9015-f2e6c6e6aec1
+results_2 = run_simulation(settings)
+
+# ╔═╡ 4170f618-8874-4952-ba76-113a1543f92a
+md"""
+## Option 3: Reading from a YAML file
+"""
+
+# ╔═╡ 7ceb0d21-1111-419e-9f5f-5383f017c4a7
+md"""
+```yaml
+n: 100
+side_length: 100.0
+contact_radius: 10.0
+initial_infection_probability: 0.1
+
+infection_probability: 0.1
+recovery_probability: 0.1
+immunity_loss_probability: 0.1
+
+mean_speed: 1.0
+std_speed: 0.1
+
+total_time: 1000
+
+record: True
+record_file: 'simulation_data.csv'
+
+```
 """
 
 # ╔═╡ a001db9c-ddd6-41e9-8257-940c54bbe416
-results = run_simulation("simulation_settings.yml")
+results_3 = run_simulation("simulation_settings.yml")
+
+# ╔═╡ fe18db65-81e9-4fc3-9de1-c8e1b556cdf3
+md"""
+# Results
+"""
 
 # ╔═╡ c8a5e30e-fc3b-4f92-9baf-17fdda4209e5
-@bind t Slider(1:1000)
+begin
+	tt = @bind t Slider(1:1000, default=100, show_value=true)
+	md"""
+	Time: $tt
+	"""
+end
 
-# ╔═╡ 6db4482c-18b4-4449-9ca4-e73e97d71c90
-t
+# ╔═╡ 6d45a79c-3265-4e67-b038-3a19a43f4967
+@bind options Select(["Option 1", "Option 2", "Option 3"])
 
 # ╔═╡ 34ae4b0e-e7ec-4dbe-9cc7-a25c5110597f
-plot_agents(results, t)
+begin
+	dict = Dict("Option 1" => results_1, "Option 2" => results_2, "Option 3" => results_3)
+	plot_agents(dict[options], t)
+end
 
-# ╔═╡ 6c877f5a-3b30-48eb-8004-e73354ceaa7e
+# ╔═╡ d0d3c93a-e915-42cb-b5b5-246db750bd2a
+plot_states(dict[options])
+
+# ╔═╡ 5d3d1e33-aef2-4818-af57-dfa8adfa508e
 
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -362,14 +476,26 @@ version = "17.4.0+2"
 """
 
 # ╔═╡ Cell order:
-# ╠═220cacce-86d9-11ef-0faa-aff9892ea370
+# ╟─220cacce-86d9-11ef-0faa-aff9892ea370
 # ╠═8a75e76e-6967-438f-adbc-cab689c58f08
 # ╠═d208726e-b8d0-4e77-9609-1afd5ae0cdcc
+# ╟─e9defd9a-d8ec-4a14-aff5-f6614673cc5f
+# ╟─5378540e-e978-47b0-9de3-1908909e764c
+# ╟─9f635327-51f0-4fd6-a7de-95a4fa8dba5b
+# ╠═eb725546-45cb-4b76-89c7-254fd5734216
+# ╠═7d9220a8-5dbf-420b-bc80-580b4d9ef37a
+# ╟─37081021-914d-4948-b6d8-cc5ac97b96cd
+# ╠═95b69669-b14b-4588-9dfc-2fbba689a8ff
+# ╠═7a6e28b8-9993-4761-9015-f2e6c6e6aec1
+# ╟─4170f618-8874-4952-ba76-113a1543f92a
+# ╟─7ceb0d21-1111-419e-9f5f-5383f017c4a7
 # ╠═a001db9c-ddd6-41e9-8257-940c54bbe416
-# ╠═6db4482c-18b4-4449-9ca4-e73e97d71c90
+# ╟─fe18db65-81e9-4fc3-9de1-c8e1b556cdf3
 # ╠═28c3f144-6086-4fb5-b365-851de0be4336
 # ╠═c8a5e30e-fc3b-4f92-9baf-17fdda4209e5
+# ╠═6d45a79c-3265-4e67-b038-3a19a43f4967
 # ╠═34ae4b0e-e7ec-4dbe-9cc7-a25c5110597f
-# ╠═6c877f5a-3b30-48eb-8004-e73354ceaa7e
+# ╠═d0d3c93a-e915-42cb-b5b5-246db750bd2a
+# ╠═5d3d1e33-aef2-4818-af57-dfa8adfa508e
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
