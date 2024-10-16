@@ -12,27 +12,12 @@
 
 ## Installation
 
-To install **AgentEpidemics.jl**, follow these steps:
+To install **AgentEpidemics.jl**, type the following command in the Julia REPL:
 
-1. Clone the repository or download the package.
-    ```bash
-    git clone https://github.com/yourusername/AgentEpidemics.jl
-    ```
-
-2. Open Julia and navigate to the package directory:
-    ```julia
-    cd("path/to/AgentEpidemics")
-    ```
-
-3. Activate and instantiate the package environment:
-    ```julia
-    using Pkg
-    Pkg.activate(".")
-    Pkg.instantiate()
-    ```
-
-This will install all necessary dependencies for the package.
-
+```julia
+using Pkg
+Pkg.add(; url="https://github.com/arindamsaha1507/AgentEpidemics")
+```
 ## Usage
 
 ### Running the Simulation
