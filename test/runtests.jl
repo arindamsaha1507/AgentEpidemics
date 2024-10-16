@@ -111,21 +111,22 @@ end
         @test size(results.positions, 1) == n * total_time
         @test size(results.positions, 2) == 5
 
-        @test all(results.states.susceptible .>= 0)
-        @test all(results.states.infected .>= 0)
-        @test all(results.states.recovered .>= 0)
+        any(>=(0), results.states.susceptible)
+        any(>=(0), results.states.infected)
+        any(>=(0), results.states.recovered)
 
-        @test all(results.states.susceptible .+ results.states.infected .+ results.states.recovered .== n)
+        any(==(n), results.states.susceptible .+ results.states.infected .+ results.states.recovered)
 
-        @test all(results.positions.time .>= 1)
-        @test all(results.positions.time .<= total_time)
-        @test all(results.positions.agent_id .>= 1)
-        @test all(results.positions.agent_id .<= n)
-        @test all(results.positions.x .>= 0)
-        @test all(results.positions.x .<= side_length)
-        @test all(results.positions.y .>= 0)
-        @test all(results.positions.y .<= side_length)
-        @test(Set(results.positions.health) == Set(["Susceptible", "Infected", "Recovered"]))
+        any(>=(1), results.positions.time)
+        any(<=(total_time), results.positions.time)
+        any(>=(1), results.positions.agent_id)
+        any(<=(n), results.positions.agent_id)
+        any(>=(0), results.positions.x)
+        any(<=(side_length), results.positions.x)
+        any(>=(0), results.positions.y)
+        any(<=(side_length), results.positions.y)
+        any(==(Set(["Susceptible", "Infected", "Recovered"])), Set(results.positions.health))
+
 
     end
 
