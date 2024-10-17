@@ -5,6 +5,6 @@ makedocs(
     )
 
 deploydocs(
-    repo = "https://github.com/arindamsaha1507/AgentEpidemics",
+    repo = "github.com/arindamsaha1507/AgentEpidemics",
     branch = "gh-pages"
     )
