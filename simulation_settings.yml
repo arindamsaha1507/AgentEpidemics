@@ -1,0 +1,16 @@
+n: 100
+side_length: 100.0
+contact_radius: 10.0
+initial_infection_probability: 0.1
+
+infection_probability: 0.1
+recovery_probability: 0.1
+immunity_loss_probability: 0.1
+
+mean_speed: 1.0
+std_speed: 0.1
+
+total_time: 1000
+
+record: True
+record_file: 'simulation_data.csv'
